@@ -4,9 +4,12 @@ import os
 import datetime
 import sys
 import pygame
+import hashlib
 import get_sound as gs
 
 print('\33]0;ANY% Text Adventure\a', end='', flush=True)
+
+version = '_beta0.4'
 
 # Setters and getters for player
 class Steve:
@@ -193,6 +196,7 @@ def setBase(steveName):
     global spawn
     global portal_fill
     global seed
+    global speed
     
     player = Steve(20, 1, 0, steveName)
     blaze = Blaze(15, 3)
@@ -213,6 +217,7 @@ def setBase(steveName):
     attSH = 7
     eyes = 0
     powder = 0
+    speed = 1
     has_seen = False
     has_seenOW = False
     has_seenSH = False
@@ -270,7 +275,7 @@ of stuff to help you on your journey.
     'Stone Sword': 5,
     'Iron Sword': 6,
     'Diamond Sword': 7,
-    'Stone Axe': 9
+    'Stone Axe': 8
     }
     global weapon_roll
     weapon_roll = random.choice(list(weapon))
@@ -298,11 +303,11 @@ Here, also take these {bed} beds. They will be handy when you fight the Ender Dr
     input('Press Enter to continue your quest: ')
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f'''You are in a vast Nether waste.
-Here you must search for the items needed to craft Eye's of Ender.
-The Eye's are used to locate and active the End Portal. This is 
+Here you must search for the items needed to craft Eyes of Ender.
+The Eyes are used to locate and active the End Portal. This is 
 how you will travel to the End, where you must defeat the Ender Dragon.
 
-To craft the Eye's of Ender, you'll need 2 things, Blaze powder and
+To craft the Eyes of Ender, you'll need 2 things, Blaze powder and
 ender pearls. Ender pearls can be gotten from Piglins. They barter
 gold for items they have. You do not have a say in what you get for
 your gold, so it might take a while to collect enough Ender Pearls
@@ -310,11 +315,11 @@ to complete the End Portal. You will need up to 12 Ender Pealrs to
 complete the Portal. But, watch out, as they can break on the way
 to the portal.
 
-Braze powder can be crafted from Blaze rods. Blaze rods are dropped from
+Blaze powder can be crafted from Blaze rods. Blaze rods are dropped from
 the blaze demons located in the Nether Fortress.
 One Blaze rod crafts 2 blaze powder.
 
-Once you have enough Eye's, you must travel to the Overworld where the 
+Once you have enough Eyes, you must travel to the Overworld where the 
 End Portal is located. Rumor has it that there is an old ruined portal
 to the overworld close by. There should be enough supplies to complete
 the portal. Use this portal to get to the Overworld.
@@ -390,7 +395,7 @@ def nether():
                         etime = time.time() - stime
                         player.setTime(etime)
                         print(vars(player))
-                        print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+                        print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
                         input('Press Enter to continue: ')
                         
                     elif ans == 'reset':
@@ -449,7 +454,7 @@ def nether():
             etime = time.time() - stime
             player.setTime(etime)
             print(vars(player))
-            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
             input('Press Enter to continue: ')
             
         elif ans == 'reset':
@@ -494,7 +499,7 @@ def overWorldStory():
 It's bright and suny, instead of dark and hot. 
 
 From here you have access to the crafting bench, and can craft the
-Eye's of Ender, needed to find the Stronghold, and activate the End Portal.
+Eyes of Ender, needed to find the Stronghold, and activate the End Portal.
 The Stronoghold is rumored to be a fair few thousand blocks from here,
 so good luck {player.getName()}, you're going to need it.     
         ''')
@@ -510,9 +515,9 @@ def overWorld():
         os.system('cls' if os.name == 'nt' else 'clear')
         print('Welcome to the Overworld! What would you like to do?')
         if has_found == False:
-            print("(1) Search for Stronghold\n(2) Craft Eye's of Ender\n(3) Back to Previous")
+            print("(1) Search for Stronghold\n(2) Craft Eyes of Ender\n(3) Back to Previous")
         else:
-            print("(1) Enter Stronghold\n(2) Craft Eye's of Ender\n(3) Back to Previous")
+            print("(1) Enter Stronghold\n(2) Craft Eyes of Ender\n(3) Back to Previous")
         print("Or you can type in 'stats', 'reset', or 'quit'")
         ans = input('--> ')
         ans = ans.lower().strip(' ')
@@ -531,7 +536,7 @@ def overWorld():
             etime = time.time() - stime
             player.setTime(etime)
             print(vars(player))
-            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
             input('Press Enter to continue: ')
             
         elif ans == 'reset':
@@ -599,7 +604,7 @@ exploseive here. Use them to kill the dragon.
             etime = time.time() - stime
             player.setTime(etime)
             print(vars(player))
-            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
             input('Press Enter to continue: ')
             
         elif ans == 'reset':
@@ -638,6 +643,10 @@ exploseive here. Use them to kill the dragon.
         
 def winner():
     os.system('cls' if os.name == 'nt' else 'clear')
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load('sounds/credits.ogg')
+    pygame.mixer.music.set_volume(1.0) 
+    pygame.mixer.music.play(-1, 0.0)
     
     try:
         with open("end.txt", "r") as f:
@@ -660,7 +669,7 @@ Because of your brave actions, the world can go back to normal now.
     
     ''')
     ftime = str(datetime.timedelta(seconds=player.getTime()))
-    print(f'NAME: {player.getName()}\nTIME: {ftime}')
+    print(f"NAME: {player.getName()}\nTIME: {ftime}\nVERSION: {version.replace('_', '')}\nHASH: {getHash()}")
     print('\n\nPlease share this screen with tuxprint#5176 on Discord\nAlso please report any bugs or suggestions to tuxprint#5176')
     input('Press Enter to continue: ')
     
@@ -697,7 +706,7 @@ def crafting():
             elif powder == ePearls:
                 ePearls = 0
                 os.system('cls' if os.name == 'nt' else 'clear')
-                print(f"You were able to craft {powder} Eye's of Ender.")
+                print(f"You were able to craft {powder} Eyes of Ender.")
                 eyes = powder
                 powder = 0
                 print(f"You have {powder} blaze powder and {ePearls} Ender Pearls remaining.'")
@@ -706,7 +715,7 @@ def crafting():
             elif powder < ePearls:
                 ePearls -= powder
                 os.system('cls' if os.name == 'nt' else 'clear')
-                print(f"You were able to craft {powder} Eye's of Ender.")
+                print(f"You were able to craft {powder} Eyes of Ender.")
                 eyes += powder
                 powder = 0
                 print(f"You have {powder} blaze powder and {ePearls} Ender Pearls remaining.'")
@@ -715,7 +724,7 @@ def crafting():
             elif powder > ePearls:
                 powder -= ePearls
                 os.system('cls' if os.name == 'nt' else 'clear')
-                print(f"You were able to craft {ePearls} Eye's of Ender.")
+                print(f"You were able to craft {ePearls} Eyes of Ender.")
                 eyes += ePearls
                 ePearls = 0
                 print(f"You have {powder} blaze powder and {ePearls} Ender Pearls remaining.'")
@@ -745,7 +754,7 @@ def crafting():
             etime = time.time() - stime
             player.setTime(etime)
             print(vars(player))
-            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
             input('Press Enter to continue: ')
             
         elif ans == 'reset':
@@ -794,7 +803,7 @@ def locateStronghold():
             os.system('cls' if os.name == 'nt' else 'clear')
             ranMob()
             if eyes == 0:
-                print("You do not have any Eye's of Ender.\nPlease try again when you have crafted the eyes.")
+                print("You do not have any Eyes of Ender.\nPlease try again when you have crafted the eyes.")
                 input('Press Enter to continue: ')
                 break
             else:
@@ -804,6 +813,7 @@ def locateStronghold():
                 broken = False
                 dist = random.randint(1400, 2100)
                 pause = dist * 0.01
+                pause = pause * speed
                 direction = random.choice(['North', 'South', 'East', 'West'])
                 if getRandom() <= 20:
                     broken = True
@@ -968,7 +978,7 @@ You have {bed} beds.''')
                 etime = time.time() - stime
                 player.setTime(etime)
                 print(vars(player))
-                print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+                print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
                 input('Press Enter to continue: ')
                 
             elif ans == 'reset':
@@ -1210,6 +1220,7 @@ def dragonFight():
                 gs.endermanHurt()
                 print(f'Oh no! You looked at an Enderman!\nYou punch him in the chest to deagro, but not before taking {enderman.getAttack()} damage!')
                 newHealth = player.getHealth() - enderman.getAttack()
+                player.setHealth(newHealth)
                 if newHealth < 1:
                     if spawn == True:
                         os.system('cls' if os.name == 'nt' else 'clear')
@@ -1224,7 +1235,7 @@ def dragonFight():
                         main()
                 else:
                     print(f'You have {player.getHealth()} health remaining.')
-                player.setHealth(newHealth)
+                
                 input('Press Enter to continue: ')
                 os.system('cls' if os.name == 'nt' else 'clear')
                 break
@@ -1515,7 +1526,7 @@ def fortress():
             etime = time.time() - stime
             player.setTime(etime)
             print(vars(player))
-            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
             input('Press Enter to continue: ')
             
         elif ans == 'reset':
@@ -1573,7 +1584,7 @@ def ruinedPortal():
             etime = time.time() - stime
             player.setTime(etime)
             print(vars(player))
-            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eye's of Ender, {powder} Blaze Powder and {bed} beds")
+            print(f"You have {rods} blaze rods, {ePearls} Ender Pearls, {eyes} Eyes of Ender, {powder} Blaze Powder and {bed} beds")
             input('Press Enter to continue: ')
             
         elif ans == 'reset':
@@ -1627,19 +1638,43 @@ You are able to repair the portal, and with a WHOOSH! the portal sparks to life!
 
 def fortressLoot():
     global att
-    loot = {'HP3': 3,'HP5': 5, 'HP10': 10 }
+    global speed
+    loot = {'HP3': 3,'HP5': 5, 'HP10': 10, 'SP1': 0.8, 'SP2': 0.6}
     loot2 = random.choice(list(loot))
     loot3 = loot.get(loot2)
-    health = player.getHealth()
-    newHealth = health + loot3
     time.sleep(1)
     if att >= 1:
         att -= 1
-        if getRandom() <= 15:
-            player.setHealth(newHealth)
-            print(f'You have found a health boost of {loot3}!\nYour new heath is {player.getHealth()}')
-            print(f'You have {att} attemps to find loot left')
-            input('Press Enter to continue: ')
+        if getRandom() <= 20:
+            if 'HP' in loot2:
+                health = player.getHealth()
+                newHealth = health + loot3
+                player.setHealth(newHealth)
+                print(f'You have found a health boost of {loot3}!\nYour new heath is {player.getHealth()}')
+                print(f'You have {att} attemps to find loot left')
+                input('Press Enter to continue: ')
+                
+            elif 'SP' in loot2:
+                if speed > loot3:
+                    speed = loot3
+                    if loot2 == 'SP1':
+                        print(f'You have found a Speed 1 potion! You will now travel to the Stronghold 20% faster!')
+                        print(f'You have {att} attemps to find loot left')
+                        input('Press Enter to continue: ')
+                    elif loot2 == 'SP2':
+                        print(f'You have found a Speed 2 potion! You will now travel to the Stronghold 40% faster!')
+                        print(f'You have {att} attemps to find loot left')
+                        input('Press Enter to continue: ')
+                else:
+                    if loot2 == 'SP1':
+                        print(f'You have found a Speed 1 potion!\nHowever you have already found a potion with equal or greater effect.')
+                        print(f'You have {att} attemps to find loot left')
+                        input('Press Enter to continue: ')
+                    elif loot2 == 'SP2':
+                        print('You have found a Speed 2 potion!\nHowever you already have Speed 2 effect.')
+                        print(f'You have {att} attemps to find loot left')
+                        input('Press Enter to continue: ')
+            
         else:
             print('You found no loot')
             print(f'You have {att} attemps to find loot left')
@@ -1656,7 +1691,7 @@ def strongholdLoot():
     amt = random.randint(1, 4)
     if attSH >= 1:
         attSH -= 1
-        if getRandom() <= 93:
+        if getRandom() <= 20:
             if loot == 'Ender Pearl':
                 ePearls += amt
                 print(f'You found {amt} Ender Pearls!')
@@ -1690,6 +1725,17 @@ def music_play():
 	pygame.mixer.music.load('sounds/game/' + music)
 	pygame.mixer.music.set_volume(1.0) 
 	pygame.mixer.music.play(-1, 0.0)
+
+def getHash():
+    filename = os.path.basename(__file__).replace('.py', '')
+    filename = filename + version
+    if os.name == 'nt':
+        filename = filename + '.exe'
+    with open(filename, 'rb') as f:
+        bytes = f.read()
+        readable_hash = hashlib.sha256(bytes).hexdigest();
+        f.close()
+        return(readable_hash)
 
 def main():
     # Get the player name
