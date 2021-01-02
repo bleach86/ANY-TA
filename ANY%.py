@@ -7,9 +7,13 @@ import pygame
 import hashlib
 import get_sound as gs
 
-print('\33]0;ANY% Text Adventure\a', end='', flush=True)
 
-version = '_beta0.4'
+version = 'v1.0'
+
+if os.name == 'nt':
+    os.system("title "+f'ANY% Text Adventure {version}')
+else:
+    print(f'\33]0;ANY% Text Adventure {version}\a', end='', flush=True)
 
 # Setters and getters for player
 class Steve:
@@ -143,10 +147,10 @@ class Creeper:
         self.attack = newAttack
 
 def getRandom():
-    return random.randint(0, 100)
+    return random.randint(1, 100)
         
 def getTrade():
-    loot_table = ['Ender Pearl', 'Crying Obsidian', 'Leather', 'Soul Sand', 'Nether Quartz', 'Iron Nuggets']
+    loot_table = ['Ender Pearl', 'Crying Obsidian', 'Leather', 'Soul Sand', 'Fire Resistance', 'Iron Nuggets']
     trade = random.choice(loot_table)
     global Barter
     Barter += 1
@@ -159,10 +163,14 @@ def getTrade():
         ePearls += num
         gs.piglinCelebrate()
         return (f'You received {num} Ender Pearls.\nYou now have {ePearls} Ender Pealrs.\nYou have {gold} gold remaining')
-    # elif trade == 'Crying Obsidian':
-        # global cObby
-        # cObby += 1
-        # return (f'You received {trade}.\nThis can be used for extra portal spins.\nYou have {gold} gold remaining')
+    elif trade == 'Fire Resistance':
+        global fire_res
+        if getRandom() <= 20:
+            fire_res = True
+            return (f'You received {trade} potion.\nBlaze can no longer burn you.\nYou have {gold} gold remaining')
+        else:
+            return (f'You received {trade} potion.\nBut you have butterfingers and you drop it.\nYou have {gold} gold remaining')
+            
     else:
         gs.piglinCelebrate()
         return (f'You got worthless {trade}.\nYou have {gold} gold remaining')
@@ -178,7 +186,7 @@ def setBase(steveName):
     global skeleton
     
     global ePearls
-    global cObby
+    global fire_res
     global Barter
     global gold
     global gold_total
@@ -208,7 +216,7 @@ def setBase(steveName):
     creeper = Creeper(20, 8)
     
     ePearls = 0
-    cObby = 0
+    fire_res = False
     Barter = 0
     gold = 0
     gold_total = 0
@@ -434,6 +442,12 @@ def nether():
                         
             else:
                 print('You did not find any piglins. Please try again')
+                input('Press Enter to continue: ')
+                
+                
+        elif ans == 'hash':
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(getHash())
                 input('Press Enter to continue: ')
                 
         elif ans == '3':
@@ -663,7 +677,7 @@ def winner():
 def winnerFinal():
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f'''Congratulations {player.getName()}!
-You have defeated to mighty and evil Ender Dragon!
+You have defeated the mighty and evil Ender Dragon!
 Because of your brave actions, the world can go back to normal now.        
     
     
@@ -869,12 +883,12 @@ def stronghold():
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         if has_seenSH == False:
-            print(f'''Welcome to the Strondhold, {player.getName()}!
-Deep within this long abanded Stronhold, is the End Portal. You will
+            print(f'''Welcome to the Stronghold, {player.getName()}!
+Deep within this long abandoned Stronghold, is the End Portal. You will
 need to navigate,  in the dark, to find the portal room. Over the centuries
 earthquacks have caused great revines to tear their way through the 
 Stronghold. Also abandoned mineshafts are littered throughout the area.
-Locating the portal rool will be a mighty task.
+Locating the portal room will be a mighty task.
 Once you locate the portal room, you will be able to activate the portal,
 and travel to the End. You will be able to search the Stronghold further
 for loot.
@@ -1160,25 +1174,35 @@ def blazeFight():
                     input('Press Enter to continue: ')
             
             elif atype == 'Fire Ball':
-                stun = random.randint(1, 5)
-                dmg = random.randint(1, 7)
-                playerHealth = player.getHealth()
-                dmg_delt = playerHealth - dmg
-                player.setHealth(dmg_delt)
-                gs.playerDamage()
-                print(f'The blaze has shot you with fire, dealing {dmg} damage!')
-                gs.playerFire()
-                
-                if dmg_delt < 1:
-                    print(f'You have died\nGame over, please try again.')
+                if fire_res == True:
+                    print(f'The blaze has shot you with fire, dealing 0 damage!\nYou still have {player.getHealth()} health')
                     input('Press Enter to continue: ')
-                    os.system('cls' if os.name == 'nt' else 'clear')
-                    main()
                 else:
-                    print(f'The fire ball has stunned you for {stun} seconds, leaving you with {player.getHealth()} health')
-                    time.sleep(stun)
-                    input('Press Enter to continue: ')
-                
+                    stun = random.randint(1, 5)
+                    dmg = random.randint(1, 7)
+                    playerHealth = player.getHealth()
+                    dmg_delt = playerHealth - dmg
+                    player.setHealth(dmg_delt)
+                    gs.playerDamage()
+                    print(f'The blaze has shot you with fire, dealing {dmg} damage!')
+                    gs.playerFire()
+                    
+                    if dmg_delt < 1:
+                        if spawn == True:
+                            os.system('cls' if os.name == 'nt' else 'clear')
+                            print(f'You have Died!')
+                            input('Press Enter to respawn.')
+                            player.setHealth(20)
+                            stronghold()
+                        else:
+                            os.system('cls' if os.name == 'nt' else 'clear')
+                            print('You have Died! GAME OVER!!!')
+                            input('Press Enter to Reset: ')
+                            main()
+                    else:
+                        print(f'The fire ball has stunned you for {stun} seconds, leaving you with {player.getHealth()} health')
+                        time.sleep(stun)
+                        input('Press Enter to continue: ')
                 
         else:
             gs.mobMiss()
@@ -1280,9 +1304,9 @@ def dragonFight():
                         winner()
                     else:
                         print(f'The Dragons health is {newDHealth}')
-                else:
-                    os.system('cls' if os.name == 'nt' else 'clear')
-                    print(f'You missed your chance to get a hit in on the Dragon!')
+            else:
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(f'You missed your chance to get a hit in on the Dragon!')
                 
             time.sleep(1)
             atype = random.choice(['Yeet', 'Melee'])
@@ -1689,6 +1713,7 @@ def strongholdLoot():
     global bed
     loot = random.choice(['Ender Pearl', 'Bed', 'Strength Potion'])
     amt = random.randint(1, 4)
+    time.sleep(1)
     if attSH >= 1:
         attSH -= 1
         if getRandom() <= 20:
@@ -1719,10 +1744,9 @@ def strongholdLoot():
         input('Press Enter to continue: ')
 
 def music_play():	
-	#music = ['calm1.ogg', 'calm2.ogg']
 	music = random.choice(os.listdir('sounds\\game\\' if os.name == 'nt' else 'sounds/game/'))
 	pygame.mixer.init()
-	pygame.mixer.music.load('sounds/game/' + music)
+	pygame.mixer.music.load('sounds\\game\\' + music if os.name == 'nt' else 'sounds/game/' + music)
 	pygame.mixer.music.set_volume(1.0) 
 	pygame.mixer.music.play(-1, 0.0)
 
