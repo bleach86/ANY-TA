@@ -6,4 +6,5 @@ It is based on 1.16 any% strats and has a story about how you must defeat the dr
 This game was not only made with speedrunning in mind, but it's also a great casual game as well.
 
 And with RNG at every corner, it's going to be a different experience every time.
+
 Join our discord at https://discord.gg/EtP3ZyVbSS
