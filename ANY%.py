@@ -8,7 +8,9 @@ import hashlib
 import get_sound as gs
 
 
-version = 'v1.1'
+version = 'v1.1.1'
+msc_see = False
+msc = False
 
 if os.name == 'nt':
     import msvcrt
@@ -1777,33 +1779,65 @@ def progressbar(it, prefix="", size=60, file=sys.stdout):
 
 def music_play():
     global msc
-    msc = False
-    print('Welcome to ANY% Text Adventure!')
-    while True:
-        ans = input('Would you like to play with sound? (off|sfx|both): ')
-        ans = ans.lower().strip(' ')
-        if ans == 'off':
-            print('All sound is off')
-            input('Press Enter to continue: ')
-            break
-        elif ans == 'sfx':
-            print('Only sound effects will play.')
-            input('Press Enter to continue: ')
-            pygame.mixer.init()
-            break
-        elif ans == 'both':
-            print('Music and sound effects will play.')
-            input('Press Enter to continue: ')
-            music = random.choice(os.listdir('sounds\\game\\' if os.name == 'nt' else 'sounds/game/'))
-            pygame.mixer.init()
-            pygame.mixer.music.load('sounds\\game\\' + music if os.name == 'nt' else 'sounds/game/' + music)
-            pygame.mixer.music.set_volume(1.0) 
-            pygame.mixer.music.play(-1, 0.0)
-            msc = True
-            break
-        else:
-            print('Invalid Response')
-            input('Press Enter to continue: ')
+    global msc_see
+    if msc_see == False:
+        while True:
+            print('Welcome to ANY% Text Adventure!')
+            ans = input('Would you like to play with sound? (off|sfx|both): ')
+            ans = ans.lower().strip(' ')
+            if ans == 'off':
+                print('All sound is off')
+                input('Press Enter to continue: ')
+                msc_see = True
+                break
+            elif ans == 'sfx':
+                print('Only sound effects will play.')
+                input('Press Enter to continue: ')
+                pygame.mixer.init()
+                msc_see = True
+                break
+            elif ans == 'both':
+                try:
+                    music = random.choice(os.listdir('sounds\\music\\' if os.name == 'nt' else 'sounds/music/'))
+                    print('Music and sound effects will play.\nUser added music detected. Use at own risk for Youtube or stream.')
+                    input('Press Enter to continue: ')
+                    pygame.mixer.init()
+                    pygame.mixer.music.load('sounds\\music\\' + music if os.name == 'nt' else 'sounds/music/' + music)
+                    pygame.mixer.music.set_volume(1.0) 
+                    pygame.mixer.music.play(-1, 0.0)
+                    msc = True
+                    msc_see = True
+                    break
+                except:
+                    print('Music and sound effects will play.')
+                    input('Press Enter to continue: ')
+                    music = random.choice(os.listdir('sounds\\game\\' if os.name == 'nt' else 'sounds/game/'))
+                    pygame.mixer.init()
+                    pygame.mixer.music.load('sounds\\game\\' + music if os.name == 'nt' else 'sounds/game/' + music)
+                    pygame.mixer.music.set_volume(1.0) 
+                    pygame.mixer.music.play(-1, 0.0)
+                    msc = True
+                    msc_see = True
+                    break
+            else:
+                print('Invalid Response')
+                input('Press Enter to continue: ')
+    else:
+        if msc == True:
+            try:
+                music = random.choice(os.listdir('sounds\\music\\' if os.name == 'nt' else 'sounds/music/'))
+                pygame.mixer.init()
+                pygame.mixer.music.load('sounds\\music\\' + music if os.name == 'nt' else 'sounds/music/' + music)
+                pygame.mixer.music.set_volume(1.0) 
+                pygame.mixer.music.play(-1, 0.0)
+                msc = True
+            except:
+                music = random.choice(os.listdir('sounds\\game\\' if os.name == 'nt' else 'sounds/game/'))
+                pygame.mixer.init()
+                pygame.mixer.music.load('sounds\\game\\' + music if os.name == 'nt' else 'sounds/game/' + music)
+                pygame.mixer.music.set_volume(1.0) 
+                pygame.mixer.music.play(-1, 0.0)
+                msc = True
 
 def getHash():
     filename = os.path.basename(__file__).replace('.py', '')
@@ -1824,6 +1858,7 @@ def flush_input():
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
 
 def main():
+    music_play()
     # Get the player name
     os.system('cls' if os.name == 'nt' else 'clear')
     steveName = input("Please Enter your name, or leave blank for a random name: ").strip(' ')
@@ -1837,6 +1872,6 @@ def main():
     intro()
    
 os.system('cls' if os.name == 'nt' else 'clear')
-music_play()
+#music_play()
 main()
     
