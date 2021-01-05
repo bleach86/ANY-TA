@@ -1313,7 +1313,7 @@ def dragonFight():
                     dragon.setHealth(newDHealth)
                     
                     if dragon.getHealth() < 1:
-                        print(f'The Dragons health is 0')
+                        print(f"The Dragon's health is 0")
                         ntime = time.time() - stime
                         player.setTime(ntime)
                         gs.dragonDeath()
@@ -1321,7 +1321,7 @@ def dragonFight():
                         input('Press Enter to continue: ')
                         winner()
                     else:
-                        print(f'The Dragons health is {newDHealth}')
+                        print(f'The Dragon\'s health is {newDHealth}')
             else:
                 os.system('cls' if os.name == 'nt' else 'clear')
                 print(f'You missed your chance to get a hit in on the Dragon!')
@@ -1799,10 +1799,10 @@ def music_play():
             elif ans == 'both':
                 try:
                     music = random.choice(os.listdir('sounds\\music\\' if os.name == 'nt' else 'sounds/music/'))
-                    print('Music and sound effects will play.\nUser added music detected. Use at own risk for Youtube or stream.')
-                    input('Press Enter to continue: ')
                     pygame.mixer.init()
                     pygame.mixer.music.load('sounds\\music\\' + music if os.name == 'nt' else 'sounds/music/' + music)
+                    print('Music and sound effects will play.\nUser added music detected. Use at own risk for Youtube or stream.')
+                    input('Press Enter to continue: ')
                     pygame.mixer.music.set_volume(1.0) 
                     pygame.mixer.music.play(-1, 0.0)
                     msc = True
