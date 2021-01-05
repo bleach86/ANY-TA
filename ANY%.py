@@ -504,6 +504,11 @@ def nether():
                     print('Invalid Response')
                     input('Press Enter to continue: ')
                     
+        elif ans == 'hash':
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(getHash())
+            input('Press Enter to continue: ')
+                    
         else:
             print('Invalid Response')
             input('Press Enter to continue: ')
@@ -586,11 +591,6 @@ def overWorld():
                 else:
                     print('Invalid Response')
                     input('Press Enter to continue: ')
-                    
-        elif ans == 'hash':
-                os.system('cls' if os.name == 'nt' else 'clear')
-                print(getHash())
-                input('Press Enter to continue: ')
         
         else:
             print('Invalid Response')
