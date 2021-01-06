@@ -8,7 +8,7 @@ import hashlib
 import get_sound as gs
 
 
-version = 'v1.1.1'
+version = 'v1.2'
 msc_see = False
 msc = False
 
@@ -152,6 +152,9 @@ class Creeper:
 
 def getRandom():
     return random.randint(1, 100)
+
+def getMultiplier():
+    return random.uniform(0.5, 1.5)
         
 def getTrade():
     loot_table = ['Ender Pearl', 'Crying Obsidian', 'Leather', 'Soul Sand', 'Fire Resistance', 'Iron Nuggets']
@@ -203,6 +206,7 @@ def setBase(steveName):
     global has_seenOW
     global has_seenSH
     global has_seenE
+    global has_seenN
     global has_found
     global has_foundPR
     global spawn
@@ -234,6 +238,7 @@ def setBase(steveName):
     has_seenOW = False
     has_seenSH = False
     has_seenE = False
+    has_seenN = False
     has_found = False
     has_foundPR = False
     spawn = False
@@ -347,15 +352,19 @@ swiftly!
 def nether():
     global gold
     global gold_total
+    global has_seen
     while True:
-        os.system('cls' if os.name == 'nt' else 'clear')
+        if has_seen == True:
+            ranLava()
         flush_input()
+        os.system('cls' if os.name == 'nt' else 'clear')
         
         print('Welcome to the Nether! Please make a choice')
         print('(1) Search for gold\n(2) Search for a Piglin\n(3) Search for a Fortress\n(4) Search for portal to Overworld')
         print("Or you can type in 'stats', 'reset', or 'quit'")
         ans = input('--> ')
         ans = ans.lower().strip(' ')
+        has_seen = True
         if ans == '1':
             pause = random.randint(1, 5)
             print('Prospecting...')
@@ -1072,11 +1081,12 @@ def piglinFight():
         os.system('cls' if os.name == 'nt' else 'clear')
         flush_input()
         if getRandom() <= 70:
-            print(f'You swung your {weapon_roll}, striking the piglin for {player.getAttack()} points of damage!')
+            attack = player.getAttack() * getMultiplier()
+            attack = round(attack)
+            print(f'You swung your {weapon_roll}, striking the piglin for {attack} points of damage!')
             gs.piglinHurt()
             pigHealth = piglin.getHealth()
-            playerAttack = player.getAttack()
-            dmg_delt = pigHealth - playerAttack
+            dmg_delt = pigHealth - attack
             piglin.setHealth(dmg_delt)
             if dmg_delt < 1:
                 gs.piglinDeath()
@@ -1093,10 +1103,10 @@ def piglinFight():
         time.sleep(1)
         
         if getRandom() <= 62:
-            print(f'The piglin has attacked you, dealing {piglin.getAttack()} damage!')
+            pigAttack = piglin.getAttack()
+            print(f'The piglin has attacked you, dealing {pigAttack} damage!')
             gs.playerDamage()
             playerHealth = player.getHealth()
-            pigAttack = piglin.getAttack()
             dmg_delt = playerHealth - pigAttack
             player.setHealth(dmg_delt)
             
@@ -1128,10 +1138,11 @@ def blazeFight():
         os.system('cls' if os.name == 'nt' else 'clear')
         flush_input()
         if getRandom() <= 70:
-            print(f'You swung your {weapon_roll}, striking the blaze for {player.getAttack()} points of damage!')
+            playerAttack = player.getAttack() * getMultiplier()
+            playerAttack = round(playerAttack)
+            print(f'You swung your {weapon_roll}, striking the blaze for {playerAttack} points of damage!')
             gs.blazeHurt()
             blaze_health = blaze.getHealth()
-            playerAttack = player.getAttack()
             dmg_delt = blaze_health - playerAttack
             blaze.setHealth(dmg_delt)
             if dmg_delt < 1:
@@ -1307,9 +1318,11 @@ def dragonFight():
                 elif bed <= 0:
                     os.system('cls' if os.name == 'nt' else 'clear')
                     gs.dragonHurt()
-                    print(f'You swing your {weapon_roll},\nStriking the Dragon, dealing {player.getAttack()} damage.')
+                    attack = player.getAttack * getMultiplier()
+                    attack = round(attack)
+                    print(f'You swing your {weapon_roll},\nStriking the Dragon, dealing {attack} damage.')
                     bed -= 1
-                    newDHealth = dragon.getHealth() - player.getAttack()
+                    newDHealth = dragon.getHealth() - attack
                     dragon.setHealth(newDHealth)
                     
                     if dragon.getHealth() < 1:
@@ -1402,7 +1415,9 @@ def ranMob():
             if mob == 'Zombie':
                 if getRandom() <= 80:
                     os.system('cls' if os.name == 'nt' else 'clear')
-                    print(f'You swing your {weapon_roll}, striking {mob} causing {player.getAttack()} damage!')
+                    attack = player.getAttack() * getMultiplier()
+                    attack = round(attack)
+                    print(f'You swing your {weapon_roll}, striking {mob} causing {attack} damage!')
                     newHealth = zombie.getHealth() - player.getAttack()
                     if newHealth < 1:
                         print(f'You have defeated {mob}!')
@@ -1425,7 +1440,9 @@ def ranMob():
             elif mob == 'Skeleton':
                 if getRandom() <= 80:
                     os.system('cls' if os.name == 'nt' else 'clear')
-                    print(f'You swing your {weapon_roll}, striking {mob} causing {player.getAttack()} damage!')
+                    attack = player.getAttack() * getMultiplier()
+                    attack = round(attack)
+                    print(f'You swing your {weapon_roll}, striking {mob} causing {attack} damage!')
                     newHealth = skeleton.getHealth() - player.getAttack()
                     if newHealth < 1:
                         print(f'You have defeated {mob}!')
@@ -1448,7 +1465,9 @@ def ranMob():
             elif mob == 'Creeper':
                 if getRandom() <= 80:
                     os.system('cls' if os.name == 'nt' else 'clear')
-                    print(f'You swing your {weapon_roll}, striking {mob} causing {player.getAttack()} damage!')
+                    attack = player.getAttack() * getMultiplier()
+                    attack = round(attack)
+                    print(f'You swing your {weapon_roll}, striking {mob} causing {attack} damage!')
                     newHealth = creeper.getHealth() - player.getAttack()
                     if newHealth < 1:
                         print(f'You have defeated {mob}!')
@@ -1543,8 +1562,38 @@ def ranMob():
                 input('Press Enter to continue: ')
                 
                     
-                
-         
+def ranLava():
+    
+    if fire_res == False:
+    
+        if getRandom() <= 12:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            flush_input()
+            pause = random.randint(1, 5)
+            dmg = random.randint(3, 12)
+            newHealth = player.getHealth() - dmg
+            player.setHealth(newHealth)
+            gs.playerFire()
+            if newHealth < 1:
+                if spawn == True:
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print(f'You have fallen in lava and died!')
+                    input('Press Enter to respawn.')
+                    player.setHealth(20)
+                    stronghold()
+                else:
+                    os.system('cls' if os.name == 'nt' else 'clear')
+                    print('You have fallen in lava and died! GAME OVER!!!')
+                    input('Press Enter to Reset: ')
+                    main()
+            else:
+                print(f'OH NO! You have fallen into lava!\nYou took {dmg} damage and were stunned for {pause} seconds.\nYou have {player.getHealth()} health remaining.')
+                time.sleep(pause)
+                input('Press Enter to continue: ')
+          
+    else:
+        pass
+          
 def fortress():
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
